@@ -1,0 +1,17 @@
+1. Speedup measures how much faster a program will run on a computer with multiple cores compared to a computer with one core. A larger speedup means faster execution.
+
+2. Efficiency is speedup divided by the number of cores. An efficiency of 1 is ideal and means that doubling the number of cores halves the time.
+
+3a. span = 15s
+3b. T1 = 30s
+3c. S2 = T1/T2 = 30/20 = 1.5
+    E2 = S2/2 = 0.75 
+3d. S4 = T1/T4 = 30/15 = 2
+    E4 = S4/4 = 0.5
+3e. S10 = T1/T10 = 30/15 = 2
+    E10 = S10/10 = 0.2
+3f. We want T1 to be 150s which means we need 30 tasks total. So we need to add 26 tasks to the parallel region. Then we need 28 cores. 
+    E28 = S28/28 = 10/28 = 0.357
+
+4a. Latency: .1/3e8 = 3e-10s = 1 clock tick. So the CPU has to wait at least 3 clock ticks. One for for the request, one to read from memory, and one for the data to return.
+4b. 3 clock ticks = 1e-9s. 256/1e-9 = 256 Gbps
