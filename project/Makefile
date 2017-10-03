@@ -3,11 +3,11 @@ CLIBS = -lm -lpng
 OBJS = ./obj/pngUtil.o ./obj/serial.o
 
 
-mandelbrot_serial: ./obj $(OBJS)
+./bin/mandelbrot_serial: ./bin ./obj $(OBJS)
 	gcc -o $@ $(OBJS) $(CFLAGS) $(CLIBS)
 
-./obj:
-	mkdir ./obj
+./%:
+	mkdir $@
 
 ./obj/%.o: ./src/%.c $(wildcard, ./src/%.h)
 	gcc -o $@ -c $^ $(CFLAGS)
@@ -16,4 +16,4 @@ mandelbrot_serial: ./obj $(OBJS)
 clean:
 	rm -f *.png
 	rm -f -r ./obj
-	rm -f mandelbrot_*
+	rm -f -r ./bin

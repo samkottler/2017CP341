@@ -20,6 +20,7 @@ int main(int argc, char** argv){
     drawPoints(image,points);
     
     writeImage(filename, WIDTH, HEIGHT, image);
+    return 0;
 }
 
 void drawPoints(int* image, point_t* points){

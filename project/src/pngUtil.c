@@ -23,4 +23,5 @@ int writeImage(char* filename, int width, int height, int* image){
 	png_write_row(wStruct, row);
     }
     png_write_end(wStruct, NULL);
+    return 0;
 }
