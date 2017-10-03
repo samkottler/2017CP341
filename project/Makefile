@@ -4,16 +4,18 @@ OBJS = ./obj/pngUtil.o ./obj/serial.o
 
 
 ./bin/mandelbrot_serial: ./bin ./obj $(OBJS)
-	gcc -o $@ $(OBJS) $(CFLAGS) $(CLIBS)
+	@echo Linking $@
+	@gcc -o $@ $(OBJS) $(CFLAGS) $(CLIBS)
 
 ./%:
-	mkdir $@
+	@mkdir $@
 
 ./obj/%.o: ./src/%.c $(wildcard, ./src/%.h)
-	gcc -o $@ -c $^ $(CFLAGS)
+	@echo Compiling $<
+	@gcc -o $@ -c $< $(CFLAGS)
 
 .PHONY:clean
 clean:
-	rm -f *.png
-	rm -f -r ./obj
-	rm -f -r ./bin
+	@rm -f *.png
+	@rm -f -r ./obj
+	@rm -f -r ./bin
