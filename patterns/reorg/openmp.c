@@ -17,34 +17,44 @@ struct phaseball {
 };
 
 struct volume {
-    size_t size;
-    size_t last;
-    struct phaseball** objects;
+    float* x;
+    float* y;
+    float* z;
+    float* mass;
+    int size;
+    int last;
 };
 
 // Add phaseball to a volume
 void volume_append(struct volume* v, struct phaseball* o) {
     if( v->last == v->size ) {
         (v->size) += 100;
-        v->objects = realloc(v->objects, sizeof(struct phaseball*)*(v->size)+100);
+        v->x = realloc(v->x, sizeof(float)*(v->size));
+	v->y = realloc(v->y, sizeof(float)*(v->size));
+	v->z = realloc(v->z, sizeof(float)*(v->size));
+	v->mass = realloc(v->mass, sizeof(float)*(v->size));
     }
-    (v->objects)[(v->last)] = o;
+    (v->x)[(v->last)] = o->x;
+    (v->y)[(v->last)] = o->y;
+    (v->z)[(v->last)] = o->z;
+    (v->mass)[(v->last)] = o->mass;
     (v->last) += 1;
     return;
 }
         
 // Place phaseballs uniformly in a box, with mass equal to the manhattan distance
 void place_uniformly(int sx, int ex, int sy, int ey, int sz, int ez, struct volume* v) {
+    struct phaseball n;
     for(int i=sx; i<=ex; i++) {
         for(int j=sy; j<=ey; j++) {
             for(int k=sz; k<=ez; k++) {
-                struct phaseball* n = malloc(sizeof(struct phaseball));
-                n->x = i;
-                n->y = j;
-                n->z = k;
-                n->mass = 1;
-                n->mass = fabs(n->x)+fabs(n->y)+fabs(n->z);
-                volume_append(v,n);
+                //struct phaseball* n = malloc(sizeof(struct phaseball));
+                n.x = i;
+                n.y = j;
+                n.z = k;
+                n.mass = 1;
+                n.mass = fabs(n.x)+fabs(n.y)+fabs(n.z);
+                volume_append(v,&n);
             }
         }
     }
@@ -57,10 +67,10 @@ void post_process(struct volume* v, float* cx, float* cy) {
     double wy=0.0;
 #pragma omp parallel for reduction(+:mass_sum,wx,wy)
     for(int i=0; i<v->last; i++) {
-        struct phaseball* o = v->objects[i];
-        mass_sum += o->mass;
-        wx += o->x * o->mass;
-        wy += o->y * o->mass;
+        //struct phaseball* o = v->objects[i];
+        mass_sum += (v->mass)[i];
+        wx += (v->x)[i] * (v->mass)[i];
+	wy += (v->y)[i] * (v->mass)[i];
     }
     *cx = wx/mass_sum;
     *cy = wy/mass_sum;
@@ -73,7 +83,10 @@ int main(int argc, char** argv) {
     struct volume v;
     v.size=100;
     v.last=0;
-    v.objects = malloc(sizeof(struct phaseball*)*100);
+    v.x = malloc(sizeof(float)*100);
+    v.y = malloc(sizeof(float)*100);
+    v.z = malloc(sizeof(float)*100);
+    v.mass = malloc(sizeof(float)*100);
 
     // Set the initial configuration
     place_uniformly(-1000,1000,-100,100,-100,100,&v);
