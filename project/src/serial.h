@@ -4,7 +4,7 @@
 #define WIDTH 500
 #define HEIGHT 400
 #define NUM_POINTS 100000
-#define NUM_TERMS 50
+#define NUM_TERMS 10
 
 #define X_MIN -2.4
 #define X_MAX 0.6
