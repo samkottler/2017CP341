@@ -15,6 +15,14 @@ int main(int argc, char** argv){
 
     double b[NUM_TERMS];
     genCoefficients(b);
+
+    /*
+    for (int n = 0; n<NUM_TERMS/2; n++){
+	for (int m = 0; m<NUM_TERMS+1; m++){
+	    if (barr[n][m]==INFINITY) printf("%d,%d\n",n,m);
+	}
+    }
+    */
     
     point_t points[NUM_POINTS];
     for (double r = 1; r<2; r+=1){
@@ -47,9 +55,27 @@ int main(int argc, char** argv){
 void genCoefficients(double* coefs){
     for (int n = 0; n<NUM_TERMS; n++){
 	if (n == 0) coefs[n] = -0.5;
-	else coefs[n] = -w(n,n+1)/n;
-	printf("%.10f\n",coefs[n]);
+	else coefs[n] = beta(0,n+1);
+	//printf("%.10f\n",coefs[n]);
     }
+}
+
+double beta(int n, int m){
+    //if (n<0 || m<0 || n>NUM_TERMS/2-1 || m>NUM_TERMS) printf("Bad Access: %d,%d\n",n,m);
+    if (barr[n][m]!=INFINITY) return barr[n][m];
+    int num = ((1<<(n+1))-1);
+    double toReturn;
+    if (m == 0) toReturn = 1;
+    else if (n>0 && m<num) toReturn = 0;
+    else{
+	toReturn = beta(n+1,m) - beta(0,m-num);
+	for (int i = num; i<=m-num; i++){
+	    toReturn-=beta(n,i)*beta(n,m-i);
+	}
+	toReturn*=0.5;
+    }
+    barr[n][m]=toReturn;
+    return toReturn;
 }
 
 double w(int n, int m){
@@ -64,7 +90,7 @@ double w(int n, int m){
 	sum+=u(0,m)+w(n-1,m);
 	toReturn = sum;
     }
-    printf("w(%d,%d)=%f\n",n,m,toReturn);
+    //printf("w(%d,%d)=%f\n",n,m,toReturn);
     warr[n][m] = toReturn;
     return toReturn;
 }

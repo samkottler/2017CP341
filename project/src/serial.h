@@ -4,7 +4,7 @@
 #define WIDTH 500
 #define HEIGHT 400
 #define NUM_POINTS 100000
-#define NUM_TERMS 10
+#define NUM_TERMS 2000
 
 #define X_MIN -2.4
 #define X_MAX 0.6
@@ -13,11 +13,13 @@
 
 double warr[NUM_TERMS+1][NUM_TERMS+2];
 double uarr[NUM_TERMS+1][NUM_TERMS+2];
+double barr[NUM_TERMS/2][NUM_TERMS+1];
 void initArrs(){
-    for (int i = 0; i<NUM_TERMS+1; i++){
-	for (int j = 0; j<NUM_TERMS+2; j++){
-	    warr[i][j]=INFINITY;
-	    uarr[i][j]=INFINITY;
+    for (int i = 0; i<NUM_TERMS/2+1; i++){
+	for (int j = 0; j<NUM_TERMS+1; j++){
+	    //warr[i][j]=INFINITY;
+	    //uarr[i][j]=INFINITY;
+	    barr[i][j]=INFINITY;
 	}
     }
 }
@@ -53,6 +55,7 @@ int writeImage(char*, int, int, int*);
 void genCoefficients(double*);
 double w(int, int);
 double u(int, int);
+double beta(int, int);
 void drawPoints(int*, point_t*);
 
 
