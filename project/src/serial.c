@@ -1,5 +1,7 @@
 #include <stdio.h>
 #include <math.h>
+#include <time.h>
+#include <unistd.h>
 
 #include "serial.h"
 
@@ -9,47 +11,61 @@ int main(int argc, char** argv){
     else filename = "out.png";
 
     initArrs();
+
+    struct timespec start_time;
+    struct timespec mid_time;
+    struct timespec end_time;
+    long msec;
     
     int image[WIDTH*HEIGHT];
     for (int i = 0; i<WIDTH*HEIGHT; i++) image[i] = 0xffffff;
 
     double b[NUM_TERMS];
+    point_t points[NUM_POINTS];
+    
+    clock_gettime(CLOCK_MONOTONIC, &start_time);
     genCoefficients(b);
+    clock_gettime(CLOCK_MONOTONIC, &mid_time);
+    genPoints(b,points);
+    clock_gettime(CLOCK_MONOTONIC, &end_time);
 
+    msec = (mid_time.tv_sec - start_time.tv_sec)*1000 + (mid_time.tv_nsec - start_time.tv_nsec)/1000000;
+    printf("%d coeficients generated in %dms\n", NUM_TERMS, (int)msec);
+    msec = (end_time.tv_sec - mid_time.tv_sec)*1000 + (end_time.tv_nsec - mid_time.tv_nsec)/1000000;
+    printf("%d points tested in %dms\n", NUM_POINTS, (int)msec);
+    
     /*
     for (int n = 0; n<NUM_TERMS/2; n++){
-	for (int m = 0; m<NUM_TERMS+1; m++){
-	    if (barr[n][m]==INFINITY) printf("%d,%d\n",n,m);
-	}
+        for (int m = 0; m<NUM_TERMS+1; m++){
+            if (barr[n][m]==INFINITY) printf("%d,%d\n",n,m);
+        }
     }
     */
-    
-    point_t points[NUM_POINTS];
-    for (double r = 1; r<2; r+=1){
-	for (int i = 0; i<NUM_POINTS; i++){
-	    double theta = 2*3.1415*i/NUM_POINTS;
-	    point_t z = (point_t){cos(theta)*r, sin(theta)*r};
-	    //printf("z=%f+%fi\n",z.x,z.y);
-	    point_t phiZ = (point_t){z.x,z.y};
-	    point_t temp = (point_t){1,0};
-	    invert(&z,&z);
-	    for (int n =0; n<NUM_TERMS; n++){
-		//printf("z^(-%d)=%f+%fi\n",n, temp.x, temp.y);
-		phiZ.x += b[n]*temp.x;
-		phiZ.y += b[n]*temp.y;
-		double t = temp.x;
-		temp.x = z.x*temp.x-z.y*temp.y;
-		temp.y = z.x*temp.y+t*z.y;
-	    }
-	    points[i].x=phiZ.x;
-	    points[i].y=phiZ.y;
-	    //printf("Phi(z)=%f+%fi\n",phiZ.x,phiZ.y);
-	}
-    
-	drawPoints(image,points);
-    }
+    drawPoints(image,points);
     writeImage(filename, WIDTH, HEIGHT, image);
     return 0;
+}
+
+void genPoints(double* b, point_t* points){
+    for (int i = 0; i<NUM_POINTS; i++){
+	double theta = 2*M_PI*i/NUM_POINTS;
+	point_t z = (point_t){cos(theta), sin(theta)};
+	//printf("z=%f+%fi\n",z.x,z.y);
+	point_t phiZ = (point_t){z.x,z.y};
+	point_t temp = (point_t){1,0};
+	invert(&z,&z);
+	for (int n =0; n<NUM_TERMS; n++){
+	    //printf("z^(-%d)=%f+%fi\n",n, temp.x, temp.y);
+	    phiZ.x += b[n]*temp.x;
+	    phiZ.y += b[n]*temp.y;
+	    double t = temp.x;
+	    temp.x = z.x*temp.x-z.y*temp.y;
+	    temp.y = z.x*temp.y+t*z.y;
+	}
+	points[i].x=phiZ.x;
+	points[i].y=phiZ.y;
+	//printf("Phi(z)=%f+%fi\n",phiZ.x,phiZ.y);
+    }
 }
 
 void genCoefficients(double* coefs){

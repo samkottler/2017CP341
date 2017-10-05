@@ -1,5 +1,5 @@
-CFLAGS = -std=c11 -Wall
-CLIBS = -lm -lpng
+CFLAGS = -std=gnu11 -Wall
+CLIBS = -lm -lpng -lrt
 BIN = ./bin
 OBJ = ./obj
 objects = pngUtil.o serial.o

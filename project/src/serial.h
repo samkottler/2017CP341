@@ -4,7 +4,7 @@
 #define WIDTH 500
 #define HEIGHT 400
 #define NUM_POINTS 100000
-#define NUM_TERMS 2000
+#define NUM_TERMS 2400
 
 #define X_MIN -2.4
 #define X_MAX 0.6
@@ -52,6 +52,7 @@ void pointPow(point_p src, point_p dest, int exp){
 }
 
 int writeImage(char*, int, int, int*);
+void genPoints(double*,point_t*);
 void genCoefficients(double*);
 double w(int, int);
 double u(int, int);
