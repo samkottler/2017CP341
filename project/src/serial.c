@@ -8,6 +8,8 @@ int main(int argc, char** argv){
     if (argc > 1) filename = argv[1];
     else filename = "out.png";
 
+    initArrs();
+    
     int image[WIDTH*HEIGHT];
     for (int i = 0; i<WIDTH*HEIGHT; i++) image[i] = 0xffffff;
 
@@ -15,26 +17,29 @@ int main(int argc, char** argv){
     genCoefficients(b);
     
     point_t points[NUM_POINTS];
-    for (int i = 0; i<NUM_POINTS; i++){
-	double theta = 2*3.1415*i/NUM_POINTS;
-	point_t z = (point_t){cos(theta), sin(theta)};
-	point_t phiZ = (point_t){z.x,z.y};
-	point_t temp = (point_t){1,0};
-	invert(&z,&z);
-	for (int n = 0; n<NUM_TERMS; n++){
-	    //printf("%f %f\n", phiZ.x, phiZ.y);
-	    phiZ.x += b[n]*temp.x;
-	    phiZ.y += b[n]*temp.y;
-	    double t = temp.x;
-	    temp.x = z.x*temp.x-z.y*temp.y;
-	    temp.y = z.x*temp.y+t*z.y;
+    for (double r = 1; r<2; r+=1){
+	for (int i = 0; i<NUM_POINTS; i++){
+	    double theta = 2*3.1415*i/NUM_POINTS;
+	    point_t z = (point_t){cos(theta)*r, sin(theta)*r};
+	    //printf("z=%f+%fi\n",z.x,z.y);
+	    point_t phiZ = (point_t){z.x,z.y};
+	    point_t temp = (point_t){1,0};
+	    invert(&z,&z);
+	    for (int n =0; n<NUM_TERMS; n++){
+		//printf("z^(-%d)=%f+%fi\n",n, temp.x, temp.y);
+		phiZ.x += b[n]*temp.x;
+		phiZ.y += b[n]*temp.y;
+		double t = temp.x;
+		temp.x = z.x*temp.x-z.y*temp.y;
+		temp.y = z.x*temp.y+t*z.y;
+	    }
+	    points[i].x=phiZ.x;
+	    points[i].y=phiZ.y;
+	    //printf("Phi(z)=%f+%fi\n",phiZ.x,phiZ.y);
 	}
-	points[i].x=phiZ.x;
-	points[i].y=phiZ.y;
-    }
-
-    drawPoints(image,points);
     
+	drawPoints(image,points);
+    }
     writeImage(filename, WIDTH, HEIGHT, image);
     return 0;
 }
@@ -48,34 +53,45 @@ void genCoefficients(double* coefs){
 }
 
 double w(int n, int m){
-    if (n == 0) return 0;
-    double sum = 0;
-    for (int j = 0; j<=m-2; j++){
-	sum+=u(0,j+1)*w(n-1,m-j-1);
+    if (warr[n][m]!=INFINITY) return warr[n][m];
+    double toReturn;
+    if (n == 0) toReturn = 0;
+    else{
+	double sum = 0;
+	for (int j = 0; j<=m-2; j++){
+	    sum+=u(0,j+1)*w(n-1,m-j-1);
+	}
+	sum+=u(0,m)+w(n-1,m);
+	toReturn = sum;
+	//printf("w(%d,%d)=%f\n",n,m,sum);
     }
-    sum+=u(0,m)+w(n-1,m);
-    //printf("w(%d,%d)=%f\n",n,m,sum);
-    return sum;
+    warr[n][m] = toReturn;
+    return toReturn;
 }
 
 double u(int n, int k){
-    if ((1<<n)-1 == k) return 1;
-    if ((1<<n)-1 > k){
+    if (uarr[n][k]!=INFINITY) return uarr[n][k];
+    double toReturn;
+    if ((1<<n)-1 == k) toReturn = 1;
+    else if ((1<<n)-1 > k){
 	double sum = 0;
 	for (int j = 0; j<=k; j++){
 	    sum+=u(n-1,j)*u(n-1,k-j);
 	}
-	return sum;
+	toReturn = sum;
     }
-    if ((1<<(n+1))-1>k) return 0;
-    double sum = 0;
-    for (int j = 1; j<=k-1; j++){
-	sum+=u(n,j)*u(n,k-j);
-	//printf("%d %d %f\n",n,k,sum);
+    else if ((1<<(n+1))-1>k) toReturn = 0;
+    else{
+	double sum = 0;
+	for (int j = 1; j<=k-1; j++){
+	    sum+=u(n,j)*u(n,k-j);
+	    //printf("%d %d %f\n",n,k,sum);
+	}
+	toReturn = 0.5*(u(n+1,k)-sum);
     }
-    sum = 0.5*(u(n+1,k)-sum);
     //printf("u(%d,%d)=%f\n",n,k,sum);
-    return sum;
+    uarr[n][k]=toReturn;
+    return toReturn;
 }
 
 void drawPoints(int* image, point_t* points){
@@ -85,7 +101,8 @@ void drawPoints(int* image, point_t* points){
 	int imgx = (int)((x-X_MIN)/(X_MAX-X_MIN)*WIDTH);
 	int imgy = (int)((y-Y_MIN)/(Y_MAX-Y_MIN)*HEIGHT);
 	//printf("%d %d %f %f\n", (int)((x-X_MIN)/(X_MAX-X_MIN)*WIDTH), imgy,x,y);
-	if (imgx<WIDTH && imgx>=0 &&  imgy<HEIGHT && imgy>=0)
+	if (imgx<WIDTH && imgx>=0 &&  imgy<HEIGHT && imgy>=0){
 	    image[imgy*WIDTH+imgx] = 0;
+	}
     }
 }
