@@ -60,6 +60,8 @@ void genCoefficients(double* coefs){
     }
 }
 
+
+/* adapted from http://fraktal.republika.pl/mset_jungreis.html */
 double beta(int n, int m){
     //if (n<0 || m<0 || n>NUM_TERMS/2-1 || m>NUM_TERMS) printf("Bad Access: %d,%d\n",n,m);
     if (barr[n][m]!=INFINITY) return barr[n][m];
