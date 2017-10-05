@@ -1,21 +1,24 @@
 CFLAGS = -std=c11 -Wall
 CLIBS = -lm -lpng
-OBJS = ./obj/pngUtil.o ./obj/serial.o
+BIN = ./bin
+OBJ = ./obj
+objects = pngUtil.o serial.o
+OBJS = $(objects:%.o=$(OBJ)/%.o)
 
-
-./bin/mandelbrot_serial: ./bin ./obj $(OBJS)
+$(BIN)/mandelbrot_serial: $(OBJS)
 	@echo Linking $@
+	@mkdir -p $(BIN)
 	@gcc -o $@ $(OBJS) $(CFLAGS) $(CLIBS)
 
-./%:
-	@mkdir $@
-
-./obj/%.o: ./src/%.c $(wildcard, ./src/%.h)
+$(OBJ)/%.o: ./src/%.c
 	@echo Compiling $<
-	@gcc -o $@ -c $< $(CFLAGS)
+	@mkdir -p $(OBJ)
+	@gcc -MMD -c -o $@ $< $(CFLAGS)
 
 .PHONY:clean
 clean:
 	@rm -f *.png
-	@rm -f -r ./obj
-	@rm -f -r ./bin
+	@rm -f -r $(OBJ)
+	@rm -f -r $(BIN)
+
+-include ./obj/*.d
