@@ -48,7 +48,7 @@ void genCoefficients(double* coefs){
     for (int n = 0; n<NUM_TERMS; n++){
 	if (n == 0) coefs[n] = -0.5;
 	else coefs[n] = -w(n,n+1)/n;
-	printf("%f\n",coefs[n]);
+	printf("%.10f\n",coefs[n]);
     }
 }
 
@@ -63,8 +63,8 @@ double w(int n, int m){
 	}
 	sum+=u(0,m)+w(n-1,m);
 	toReturn = sum;
-	//printf("w(%d,%d)=%f\n",n,m,sum);
     }
+    printf("w(%d,%d)=%f\n",n,m,toReturn);
     warr[n][m] = toReturn;
     return toReturn;
 }
@@ -89,7 +89,7 @@ double u(int n, int k){
 	}
 	toReturn = 0.5*(u(n+1,k)-sum);
     }
-    //printf("u(%d,%d)=%f\n",n,k,sum);
+    //printf("u(%d,%d)=%f\n",n,k,toReturn);
     uarr[n][k]=toReturn;
     return toReturn;
 }
