@@ -35,12 +35,18 @@ int main(int argc, char** argv){
     printf("%d points tested in %dms\n", NUM_POINTS, (int)msec);
     
     /*
-    for (int n = 0; n<NUM_TERMS/2; n++){
+    printf("n\\m");
+    for (int m = 0; m<NUM_TERMS+1; m++) printf("%3d",m);
+    printf("\n"); 
+    for (int n = 0; n<N_MAX; n++){
+	printf("%2d ",n);
         for (int m = 0; m<NUM_TERMS+1; m++){
-            if (barr[n][m]==INFINITY) printf("%d,%d\n",n,m);
+            if (barr[n][m]==INFINITY) printf("[ ]");
+	    else printf("[X]");
         }
-    }
-    */
+	printf("\n");
+	}*/
+    
     drawPoints(image,points);
     writeImage(filename, WIDTH, HEIGHT, image);
     return 0;
@@ -79,7 +85,7 @@ void genCoefficients(double* coefs){
 
 /* adapted from http://fraktal.republika.pl/mset_jungreis.html */
 double beta(int n, int m){
-    //if (n<0 || m<0 || n>NUM_TERMS/2-1 || m>NUM_TERMS) printf("Bad Access: %d,%d\n",n,m);
+    //if (n<0 || m<0 || n>N_MAX || m>NUM_TERMS) printf("Bad Access: %d,%d\n",n,m);
     if (barr[n][m]!=INFINITY) return barr[n][m];
     int num = ((1<<(n+1))-1);
     double toReturn;
