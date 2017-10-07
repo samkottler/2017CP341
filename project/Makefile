@@ -1,15 +1,21 @@
-CFLAGS = -std=gnu11 -Wall
-CLIBS = -lm -lpng -lrt
+CFLAGS = -std=gnu11 -Wall -fcilkplus -fopenmp
+CLIBS = -lm -lpng
 BIN = ./bin
 OBJ = ./obj
-objects = pngUtil.o serial.o
+objects = pngUtil.o
 OBJS = $(objects:%.o=$(OBJ)/%.o)
+binaries = serial cilk openmp
+BINS = $(binaries:%=$(BIN)/mandelbrot_%)
 
-$(BIN)/mandelbrot_serial: $(OBJS)
+.PHONY: all
+all: $(BINS)
+
+$(BIN)/mandelbrot_%: $(OBJ)/%.o $(OBJS)
 	@echo Linking $@
 	@mkdir -p $(BIN)
-	@gcc -o $@ $(OBJS) $(CFLAGS) $(CLIBS)
+	@gcc -o $@ $< $(OBJS) $(CFLAGS) $(CLIBS)
 
+.PRECIOUS: $(OBJ)/%.o
 $(OBJ)/%.o: ./src/%.c
 	@echo Compiling $<
 	@mkdir -p $(OBJ)

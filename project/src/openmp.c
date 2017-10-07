@@ -2,6 +2,7 @@
 #include <math.h>
 #include <time.h>
 #include <unistd.h>
+#include <omp.h>
 
 #include "mandelbrot.h"
 
@@ -54,6 +55,7 @@ int main(int argc, char** argv){
 }
 
 void genPoints(double* b, point_t* points){
+    #pragma omp parallel for
     for (int i = 0; i<NUM_POINTS; i++){
 	double theta = 2*M_PI*i/NUM_POINTS;
 	point_t z = (point_t){cos(theta), sin(theta)};
