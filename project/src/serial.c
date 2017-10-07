@@ -34,7 +34,7 @@ int main(int argc, char** argv){
     msec = (end_time.tv_sec - mid_time.tv_sec)*1000 + (end_time.tv_nsec - mid_time.tv_nsec)/1000000;
     printf("%d points tested in %dms\n", NUM_POINTS, (int)msec);
     
-    /*
+#ifdef CHECK_ARR
     printf("n\\m");
     for (int m = 0; m<NUM_TERMS+1; m++) printf("%3d",m);
     printf("\n"); 
@@ -45,7 +45,8 @@ int main(int argc, char** argv){
 	    else printf("[X]");
         }
 	printf("\n");
-	}*/
+    }
+#endif
     
     drawPoints(image,points);
     writeImage(filename, WIDTH, HEIGHT, image);
@@ -82,7 +83,6 @@ void genCoefficients(double* coefs){
     }
 }
 
-
 /* adapted from http://fraktal.republika.pl/mset_jungreis.html */
 double beta(int n, int m){
     //if (n<0 || m<0 || n>N_MAX || m>NUM_TERMS) printf("Bad Access: %d,%d\n",n,m);
@@ -99,48 +99,6 @@ double beta(int n, int m){
 	toReturn*=0.5;
     }
     barr[n][m]=toReturn;
-    return toReturn;
-}
-
-double w(int n, int m){
-    if (warr[n][m]!=INFINITY) return warr[n][m];
-    double toReturn;
-    if (n == 0) toReturn = 0;
-    else{
-	double sum = 0;
-	for (int j = 0; j<=m-2; j++){
-	    sum+=u(0,j+1)*w(n-1,m-j-1);
-	}
-	sum+=u(0,m)+w(n-1,m);
-	toReturn = sum;
-    }
-    //printf("w(%d,%d)=%f\n",n,m,toReturn);
-    warr[n][m] = toReturn;
-    return toReturn;
-}
-
-double u(int n, int k){
-    if (uarr[n][k]!=INFINITY) return uarr[n][k];
-    double toReturn;
-    if ((1<<n)-1 == k) toReturn = 1;
-    else if ((1<<n)-1 > k){
-	double sum = 0;
-	for (int j = 0; j<=k; j++){
-	    sum+=u(n-1,j)*u(n-1,k-j);
-	}
-	toReturn = sum;
-    }
-    else if ((1<<(n+1))-1>k) toReturn = 0;
-    else{
-	double sum = 0;
-	for (int j = 1; j<=k-1; j++){
-	    sum+=u(n,j)*u(n,k-j);
-	    //printf("%d %d %f\n",n,k,sum);
-	}
-	toReturn = 0.5*(u(n+1,k)-sum);
-    }
-    //printf("u(%d,%d)=%f\n",n,k,toReturn);
-    uarr[n][k]=toReturn;
     return toReturn;
 }
 
