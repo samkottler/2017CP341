@@ -7,6 +7,14 @@ OBJS = $(objects:%.o=$(OBJ)/%.o)
 binaries = serial cilk openmp
 BINS = $(binaries:%=$(BIN)/mandelbrot_%)
 
+ifeq (1, $(CHECK_ARR))
+CFLAGS := $(CFLAGS) -D CHECK_ARR
+endif
+
+ifeq (1, $(DEBUG))
+CFLAGS := $(CFLAGS) -g
+endif
+
 .PHONY: all
 all: $(BINS)
 
