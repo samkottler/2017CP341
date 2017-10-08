@@ -27,9 +27,8 @@ void genPoints(double* b, point_t* points){
 }
 
 void genCoefficients(double* coefs){
-    for (int n = 0; n<NUM_TERMS; n++){
-	if (n == 0) coefs[n] = -0.5;
-	else coefs[n] = beta(0,n+1);
+    cilk_for (int n = 0; n<NUM_TERMS; n++){
+	coefs[n] = beta(0,n+1);
 	//printf("%.10f\n",coefs[n]);
     }
 }
