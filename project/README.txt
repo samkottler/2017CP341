@@ -1,3 +1,5 @@
+Coefficient algorithm adapted from http://fraktal.republika.pl/mset_jungreis.html
+
 Note:
 None of the programs will compile on the headnode currently because the compiler on the headnode
 has a problem with floating point literals. They compile fine on the compute nodes and run fine

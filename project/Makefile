@@ -4,7 +4,7 @@ BIN = ./bin
 OBJ = ./obj
 objects = pngUtil.o mandelbrot.o
 OBJS = $(objects:%.o=$(OBJ)/%.o)
-binaries = serial cilk openmp
+binaries = serial cilk openmp nonrecursive
 BINS = $(binaries:%=$(BIN)/mandelbrot_%)
 
 ifeq (1, $(CHECK_ARR))
