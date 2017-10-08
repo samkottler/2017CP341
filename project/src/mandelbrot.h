@@ -4,7 +4,7 @@
 #define WIDTH 500
 #define HEIGHT 400
 #define NUM_POINTS 100000
-#define NUM_TERMS 100
+#define NUM_TERMS 4000
 
 #define X_MIN -2.4
 #define X_MAX 0.6
@@ -40,27 +40,14 @@
 #endif
 
 double barr[N_MAX][NUM_TERMS+1];
-void initArrs(){
-    for (int i = 0; i<N_MAX; i++){
-	for (int j = 0; j<NUM_TERMS+1; j++){
-	    barr[i][j]=INFINITY;
-	}
-    }
-}
 
 typedef struct point{
     double x;
     double y;
 } point_t, *point_p;
 
-void invert(point_p src, point_p dest){
-    double x = src->x;
-    double y = src->y;
-    double denom = x*x+y*y;
-    dest->x = x/denom;
-    dest->y = -y/denom;
-}
-
+void initArrs();
+void invert(point_p src, point_p dest);
 int writeImage(char*, int, int, int*);
 void genPoints(double*,point_t*);
 void genCoefficients(double*);

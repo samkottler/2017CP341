@@ -2,7 +2,7 @@ CFLAGS = -std=gnu11 -Wall -fcilkplus -fopenmp
 CLIBS = -lm -lpng
 BIN = ./bin
 OBJ = ./obj
-objects = pngUtil.o
+objects = pngUtil.o mandelbrot.o
 OBJS = $(objects:%.o=$(OBJ)/%.o)
 binaries = serial cilk openmp
 BINS = $(binaries:%=$(BIN)/mandelbrot_%)
