@@ -1,21 +1,38 @@
 #! /bin/bash
 
 echo "Running serial"
-./bin/mandelbrot_serial serial.png
+srun ./bin/mandelbrot_serial serial.png
 
 for file in ./bin/*
 do
     if [ "$file" != "./bin/mandelbrot_serial" ]
     then
-	echo
-	echo "Running $file"
-	eval $file
-	eval "diff out.png serial.png"
-	if [ "$?" = "0" ]
+	if [ "$file" = "./bin/mpi" ]
 	then
-	    echo "Correct image"
+	    for i in 1 2
+	    do
+		echo
+		echo "Running mpi on $i nodes"
+		eval "srun -N$i -n$i $file"
+		eval "diff out.png serial.png"
+		if [ "$?" = "0" ]
+		then
+		    echo "Correct image"
+		else
+		    echo "Incorrect image"
+		fi
+	    done
 	else
-	    echo "Incorrect image"
+	    echo
+	    echo "Running $file"
+	    eval "srun $file"
+	    eval "diff out.png serial.png"
+	    if [ "$?" = "0" ]
+	    then
+		echo "Correct image"
+	    else
+		echo "Incorrect image"
+	    fi
 	fi
     fi
 done

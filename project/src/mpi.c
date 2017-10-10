@@ -3,6 +3,7 @@
 #include <time.h>
 #include <unistd.h>
 #include <mpi.h>
+#include <cilk/cilk.h>
 
 #include "mandelbrot.h"
 
@@ -84,7 +85,7 @@ int main(int argc, char** argv){
 }
 
 void genPoints(double* b, point_t* points){
-    for (int i = commrank; i<NUM_POINTS; i+=commsize){
+    cilk_for (int i = commrank; i<NUM_POINTS; i+=commsize){
 	double theta = 2*M_PI*i/NUM_POINTS;
 	point_t z = (point_t){cos(theta), sin(theta)};
 	//printf("z=%f+%fi\n",z.x,z.y);
@@ -107,7 +108,7 @@ void genPoints(double* b, point_t* points){
 
 void genCoefficients(double* coefs){
     for (int i = 0; i<NUM_TERMS+1; i++){
-	for (int n = 0; n<N_MAX; n++){
+	cilk_for (int n = 0; n<N_MAX; n++){
 	    int num = ((1<<(n+1))-1);
 	    if (i==0){
 		int mMin = ((1<<n)-1);
