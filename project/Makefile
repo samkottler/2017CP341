@@ -18,6 +18,14 @@ endif
 .PHONY: all
 all: $(BINS)
 
+.PHONY: mpi
+mpi: $(BIN)/mpi
+
+$(BIN)/mpi: ./src/pngUtil.c ./src/mpi.c ./src/mandelbrot.h
+	@echo Compiling mpi
+	@mkdir -p $(BIN)
+	mpicc -o $@ ./src/mpi.c ./src/pngUtil.c $(CFLAGS) $(CLIBS)
+
 $(BIN)/mandelbrot_%: $(OBJ)/%.o $(OBJS)
 	@echo Linking $@
 	@mkdir -p $(BIN)
