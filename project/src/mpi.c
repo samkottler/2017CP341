@@ -153,7 +153,7 @@ void invert(point_p src, point_p dest){
 }
 
 void drawPoints(int* image, point_t* points){
-    for (int i = 0; i<NUM_POINTS; i++){
+    for (int i = commrank; i<NUM_POINTS; i+=commsize){
 	double x = points[i].x;
 	double y = points[i].y;
 	int imgx = (int)((x-X_MIN)/(X_MAX-X_MIN)*WIDTH);
