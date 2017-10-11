@@ -1,7 +1,7 @@
 #! /bin/bash
 
 echo "Running serial"
-srun ./bin/mandelbrot_serial serial.png
+eval "srun -x node[0-1] ./bin/mandelbrot_serial serial.png"
 
 for file in ./bin/*
 do
@@ -13,7 +13,7 @@ do
 	    do
 		echo
 		echo "Running mpi on $i nodes"
-		eval "srun -N$i -n$i $file"
+		eval "srun -x node[0-1] -N$i -n$i $file"
 		eval "diff out.png serial.png"
 		if [ "$?" = "0" ]
 		then
@@ -25,7 +25,7 @@ do
 	else
 	    echo
 	    echo "Running $file"
-	    eval "srun $file"
+	    eval "srun -x node[0-1] $file"
 	    eval "diff out.png serial.png"
 	    if [ "$?" = "0" ]
 	    then

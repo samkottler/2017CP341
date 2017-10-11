@@ -3,8 +3,8 @@
 
 #define WIDTH 500
 #define HEIGHT 400
-#define NUM_POINTS 200000
-#define NUM_TERMS 15000
+#define NUM_POINTS 300000
+#define NUM_TERMS 20000
 
 #define X_MIN -2.4
 #define X_MAX 0.6
@@ -39,6 +39,8 @@
 #define N_MAX 13
 #elif NUM_TERMS < 16383
 #define N_MAX 14
+#elif NUM_TERMS < 32767
+#define N_MAX 15
 #else
 #define N_MAX 31
 #endif
