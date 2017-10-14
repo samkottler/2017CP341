@@ -42,5 +42,6 @@ clean:
 	@rm -f *.png
 	@rm -f -r $(OBJ)
 	@rm -f -r $(BIN)
-
+	@rm -f -r ./sbat
+	@rm -f -r ./out
 -include ./obj/*.d

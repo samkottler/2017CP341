@@ -2,3 +2,5 @@
 *mandelbrot_*
 *.png
 mpi
+*.sbatch
+out/
