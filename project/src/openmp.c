@@ -6,14 +6,14 @@
 
 void genPoints(double* b, point_t* points){
     #pragma omp parallel for
-    for (int i = 0; i<NUM_POINTS; i++){
-	double theta = 2*M_PI*i/NUM_POINTS;
+    for (int i = 0; i<num_points; i++){
+	double theta = 2*M_PI*i/num_points;
 	point_t z = (point_t){cos(theta), sin(theta)};
 	//printf("z=%f+%fi\n",z.x,z.y);
 	point_t phiZ = (point_t){z.x,z.y};
 	point_t temp = (point_t){1,0};
 	invert(&z,&z);
-	for (int n =0; n<NUM_TERMS; n++){
+	for (int n =0; n<num_terms; n++){
 	    //printf("z^(-%d)=%f+%fi\n",n, temp.x, temp.y);
 	    phiZ.x += b[n]*temp.x;
 	    phiZ.y += b[n]*temp.y;
@@ -29,7 +29,7 @@ void genPoints(double* b, point_t* points){
 
 void genCoefficients(double* coefs){
     #pragma omp parallel for
-    for (int n = 0; n<NUM_TERMS; n++){
+    for (int n = 0; n<num_terms; n++){
 	if (n == 0) coefs[n] = -0.5;
 	else coefs[n] = beta(0,n+1);
 	//printf("%.10f\n",coefs[n]);

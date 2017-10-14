@@ -2,14 +2,18 @@
 #include <math.h>
 #include <time.h>
 #include <unistd.h>
+#include <stdlib.h>
 
 #include "mandelbrot.h"
 
 int main(int argc, char** argv){
     char* filename;
-    if (argc > 1) filename = argv[1];
+    if (argc > 3) filename = argv[3];
     else filename = "out.png";
-
+    sscanf(argv[1],"%d",&num_terms);
+    sscanf(argv[2],"%d",&num_points);
+    n_max = (int)log2(num_terms+1)+1;
+    
     initArrs();
 
     struct timespec start_time;
@@ -20,8 +24,8 @@ int main(int argc, char** argv){
     int image[WIDTH*HEIGHT];
     for (int i = 0; i<WIDTH*HEIGHT; i++) image[i] = 0xffffff;
 
-    double b[NUM_TERMS];
-    point_t points[NUM_POINTS];
+    double b[num_terms];
+    point_t points[num_points];
     
     clock_gettime(CLOCK_MONOTONIC, &start_time);
     genCoefficients(b);
@@ -30,9 +34,9 @@ int main(int argc, char** argv){
     clock_gettime(CLOCK_MONOTONIC, &end_time);
 
     msec = (mid_time.tv_sec - start_time.tv_sec)*1000 + (mid_time.tv_nsec - start_time.tv_nsec)/1000000;
-    printf("%d coeficients generated in %dms\n", NUM_TERMS, (int)msec);
+    printf("%d coeficients generated in %dms\n", num_terms, (int)msec);
     msec = (end_time.tv_sec - mid_time.tv_sec)*1000 + (end_time.tv_nsec - mid_time.tv_nsec)/1000000;
-    printf("%d points tested in %dms\n", NUM_POINTS, (int)msec);
+    printf("%d points tested in %dms\n", num_points, (int)msec);
     
 #ifdef CHECK_ARR
     printf("n\\m");
@@ -54,8 +58,10 @@ int main(int argc, char** argv){
 }
 
 void initArrs(){
-    for (int i = 0; i<N_MAX; i++){
-	for (int j = 0; j<NUM_TERMS+1; j++){
+    barr = (double **) malloc(sizeof(double*)*(n_max));
+    for (int i = 0; i<n_max; i++){
+	barr[i]=(double *)malloc(sizeof(double)*(num_terms+1));
+	for (int j = 0; j<num_terms+1; j++){
 	    barr[i][j]=INFINITY;
 	}
     }
@@ -70,7 +76,7 @@ void invert(point_p src, point_p dest){
 }
 
 void drawPoints(int* image, point_t* points){
-    for (int i = 0; i<NUM_POINTS; i++){
+    for (int i = 0; i<num_points; i++){
 	double x = points[i].x;
 	double y = points[i].y;
 	int imgx = (int)((x-X_MIN)/(X_MAX-X_MIN)*WIDTH);
