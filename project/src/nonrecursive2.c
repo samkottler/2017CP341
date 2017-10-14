@@ -4,8 +4,8 @@
 #include "mandelbrot.h"
 
 void genPoints(double* b, point_t* points){
-    for (int i = 0; i<num_terms; i++){
-	double theta = 2*M_PI*i/num_terms;
+    for (int i = 0; i<num_points; i++){
+	double theta = 2*M_PI*i/num_points;
 	point_t z = (point_t){cos(theta), sin(theta)};
 	//printf("z=%f+%fi\n",z.x,z.y);
 	point_t phiZ = (point_t){z.x,z.y};
